@@ -1,0 +1,17 @@
+{
+  "name": "iMT-Helper",
+  "script": "node",
+  "args": "index.js",
+  "cwd": "./",
+  "watch": [
+    "index.js",
+    "config.js"
+  ],
+  "ignore_watch": [
+    "node_modules"
+  ],
+  "watch_options": {
+    "followSymlinks": false
+  },
+  "autorestart": false
+}
