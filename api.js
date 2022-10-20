@@ -265,7 +265,7 @@ async function travelMain () {
     }
   } else {
     console.log()
-    console.log('活动未开始')
+    log('活动未开始')
   }
 }
 
@@ -282,7 +282,9 @@ async function appointmentMain () {
 }
 
 async function init () {
-  console.log('----------------- Start script -----------------')
+  console.log()
+  console.log()
+  log('----------------- Start script -----------------')
   travelMain()
   // appointmentMain()
 }
