@@ -217,9 +217,9 @@ function startTravel () {
   log('开始旅行: ')
   return httpRequest(TRAVEL_BASE_URL + 'startTravel', 'post', {}).then(d => {
     if (d.code === 2000) {
-      log('开始旅行成功')
+      sendBarkMsg('开始旅行成功')
     } else {
-      log('开始旅行失败', d.message || '')
+      sendBarkMsg('开始旅行失败', d.message || '')
       return Promise.reject()
     }
   })
@@ -269,14 +269,22 @@ async function travelMain () {
   }
 }
 
+async function appointmentMain () {
+  log('开始预约虎茅:')
+  return httpRequest(TRAVEL_BASE_URL + 'xxxxx', 'post', {}).then(d => {
+    if (d.code === 2000) {
+      log(`预约 猎德的 虎茅成功`)
+    } else {
+      log(`预约虎茅失败, 请手动预约`, d.message || '')
+      return Promise.reject()
+    }
+  })
+}
+
 async function init () {
-  console.log('Start script')
-
+  console.log('----------------- Start script -----------------')
   travelMain()
-
-  console.log()
-  console.log('End stript')
-  console.log()
+  // appointmentMain()
 }
 
 exports.init = init
