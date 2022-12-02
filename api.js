@@ -175,9 +175,9 @@ function getUserEnergyAward () {
     {}
   ).then(d => {
     if (d.code === 200) {
-      log('耐力值领取成功')
+      sendBarkMsg('耐力值领取成功')
     } else {
-      log('耐力值领取失败', d.message || '')
+      sendBarkMsg('耐力值领取失败', d.message || '')
       return Promise.reject()
     }
   })
