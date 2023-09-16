@@ -1,7 +1,7 @@
 const axios = require('axios')
 const dayjs = require('dayjs')
 const duration = require('dayjs/plugin/duration')
-const { baseURL, cookie, deviceId, bark } = require('./config')
+const { baseURL, cookie, bark } = require('./config')
 require('./console')
 
 dayjs.extend(duration)
@@ -15,6 +15,8 @@ else cookies = [cookie]
 cookies = cookies.filter(v => v)
 
 let currentCookie = ''
+let currentDeviceId = ''
+
 
 if (!cookies.length) {
   console.log('Not found of cookie in config.js, Program stop!')
@@ -26,14 +28,14 @@ const barkAxios = axios.create()
 
 const TRAVEL_BASE_URL = baseURL + 'xmTravel/'
 
+
 imtHelperAxios.interceptors.request.use(req => {
   req.headers['X-Requested-With'] = 'XMLHttpRequest'
   req.headers['Accept-Language'] = 'zh-cn'
   req.headers['MT-Request-ID'] = getGUID()
   req.headers[
     'User-Agent'
-  ] = `Mozilla/5.0 (iPhone; CPU iPhone OS 14_8 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 moutaiapp/1.2.1 device-id/${deviceId || 'moutaiapp'
-  }`
+  ] = `Mozilla/5.0 (iPhone; CPU iPhone OS 14_8 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 moutaiapp/1.2.1 device-id/${currentDeviceId || 'moutaiapp'}`
   req.headers['Referer'] =
     'https://h5.moutai519.com.cn/gux/game/main?appConfig=2_1_2'
   req.headers['Cookie'] = currentCookie
@@ -238,11 +240,25 @@ function shareReward () {
   })
 }
 
+// 在cookie中提取出deviceId
+function getMTDeviceID (str) {
+  const regex = /MT-Device-ID-Wap=([^;]+)/
+  const match = str.match(regex)
+  if (match && match[1]) {
+    return match[1]
+  }
+  return null
+}
+
 async function travelMain () {
   let time = +dayjs().format('HH')
   if (time >= 9 && time < 20) {
+    // console.log('cookies:', cookies)
     for await (i of cookies) {
       currentCookie = i
+      // console.log('currentCookie:', currentCookie)
+      currentDeviceId = getMTDeviceID(currentCookie)
+      // console.log('currentDeviceId:', currentDeviceId)
       try {
         let { remainChance, finish, currentPeriodCanConvertXmyNum } =
           await getUserIsolationPageData()
@@ -269,24 +285,11 @@ async function travelMain () {
   }
 }
 
-async function appointmentMain () {
-  log('开始预约虎茅:')
-  return httpRequest(TRAVEL_BASE_URL + 'xxxxx', 'post', {}).then(d => {
-    if (d.code === 2000) {
-      log(`预约 猎德的 虎茅成功`)
-    } else {
-      log(`预约虎茅失败, 请手动预约`, d.message || '')
-      return Promise.reject()
-    }
-  })
-}
-
 async function init () {
   console.log()
   console.log()
   log('----------------- Start script -----------------')
   travelMain()
-  // appointmentMain()
 }
 
 exports.init = init
